@@ -254,7 +254,7 @@ Public Class frmModMan
     Private Sub btnLaunch_Click(sender As Object, e As EventArgs) Handles btnLaunch.Click
   
 
-
+        Directory.SetCurrentDirectory(dataPath)
 
         Dim modInfoPath As String
         modName = lbModList.SelectedItem.ToString
