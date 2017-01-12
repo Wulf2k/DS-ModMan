@@ -92,11 +92,13 @@ Public Class frmModMan
     End Sub
 
     Sub InitExeLocs
+        nalocs.Add("ffx/name", &HD66BD8)
+        nalocs.Add("ffx/val", &HD66BE0)
         nalocs.Add("interroot/val", &HD65C3C)
         nalocs.Add("msb/val", &HD66318)
         nalocs.Add("msb/lookup", &HD907F0)
-        nalocs.Add("ffx/name", &HD66BD8)
-        nalocs.Add("ffx/val", &HD66BE0)
+        nalocs.Add("msg/val", &HD65E34)
+        nalocs.Add("param/val", &HD663B0)
     End Sub
 
     Public Sub ScanForDarkSoulsDataDir()
@@ -283,41 +285,62 @@ Public Class frmModMan
         Catch ex As Exception
             
         End Try
-        
+
         If File.exists(modInfoPath) Then
-            Dim modCmds() as String
+            Dim modCmds() As String
             modCmds = File.ReadAllLines(modInfoPath)
-            
-            For each cmd In modCmds
+
+            Dim modredirect As Boolean = False
+            For Each cmd In modCmds
                 If cmd.Split(",")(0) = "redirect" Then
                     Try
+                        modredirect = True
                         Redirect(cmd.Split(",")(1))
                     Catch ex As Exception
                         MsgBox("Error applying redirect." & Environment.NewLine & ex.Message)
                     End Try
-                    
+
                 End If
             Next
+            If modredirect Then EnableRedirect()
 
             Process.Start(dataPath & "\DARKSOULS.mod.exe")
-
-
         Else
             MsgBox("modinfo.txt for " & modName & " not present.")
             Return
         End If
     End Sub
 
+    Sub EnableRedirect()
+        'Rename "ffx" alias to "mod"
+        WUniStrN(exelocs("ffx/name"), "mod")
+
+        'Point "mod:/" alias to "interrot:/"
+        WUniStrN(exelocs("ffx/val"), "interroot:/")
+
+        'Point "interroot:/" to "mods/modname", relative to DARKSOULS.EXE location
+        WUniStrN(exelocs("interroot/val"), "mods/" & modName)
+    End Sub
     Sub Redirect(byval redir As string)
         fs = New IO.FileStream(dataPath & "\DARKSOULS.mod.exe", FileMode.Open)
 
         Select Case redir.ToLower
             Case "msb"
-                WUniStrN(exelocs("interroot/val"), "mods/" & modName)
+                'Change value of "msb:/" alias to "mod:/msb"
                 WUniStrN(exelocs("msb/val"), "mod:/msb")
+
+                'Force game to use "msb:/" alias instead of "map:/MapStudio/"
                 WUniStrN(exelocs("msb/lookup"), "msb:/%s.msb")
-                WUniStrN(exelocs("ffx/name"), "mod")
-                WUniStrN(exelocs("ffx/val"), "interroot:/")
+
+            Case "msg"
+                'Change value of "msg:/ alias to "mod:/msg"
+                WUniStrN(exelocs("msg/val"), "mod:/msg")
+
+            Case "param"
+                'Change value of "param:/" alias to "mod:/param"
+                WUniStrN(exelocs("param/val"), "mod:/param")
+
+
         End Select
 
         fs.Close
