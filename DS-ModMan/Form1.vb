@@ -127,7 +127,6 @@ Public Class frmModMan
             Dim exepath = possibleDarkSoulsPath & "\DarkSouls.exe"
 
             If File.Exists(exepath) Then
-                dataPath = possibleDarkSoulsPath
                 txtEXEfile.Text = exepath
                 checkEXE()
             End If
@@ -188,6 +187,9 @@ Public Class frmModMan
         fs.Close()
 
         If lblEXEtype.text = "NA Release EXE selected" Then
+            'TODO: Switch this to instrrev
+            dataPath = Strings.Left(txtEXEfile.Text, txtEXEfile.Text.Length - 14)
+
             'Create steam_appid.txt so that EXEs can be launched manually
             If Not File.Exists(dataPath & "\steam_appid.txt") Then
                 fs = New IO.FileStream(dataPath & "\steam_appid.txt", IO.FileMode.Create)
