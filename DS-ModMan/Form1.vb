@@ -339,8 +339,6 @@ Public Class frmModMan
             Case "param"
                 'Change value of "param:/" alias to "mod:/param"
                 WUniStrN(exelocs("param/val"), "mod:/param")
-
-
         End Select
 
         fs.Close
