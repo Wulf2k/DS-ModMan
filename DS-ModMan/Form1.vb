@@ -312,6 +312,8 @@ Public Class frmModMan
     End Sub
 
     Sub EnableRedirect()
+        fs = New IO.FileStream(dataPath & "\DARKSOULS.mod.exe", FileMode.Open)
+
         'Rename "ffx" alias to "mod"
         WUniStrN(exelocs("ffx/name"), "mod")
 
@@ -320,6 +322,8 @@ Public Class frmModMan
 
         'Point "interroot:/" to "mods/modname", relative to DARKSOULS.EXE location
         WUniStrN(exelocs("interroot/val"), "mods/" & modName)
+
+        fs.Close()
     End Sub
     Sub Redirect(byval redir As string)
         fs = New IO.FileStream(dataPath & "\DARKSOULS.mod.exe", FileMode.Open)

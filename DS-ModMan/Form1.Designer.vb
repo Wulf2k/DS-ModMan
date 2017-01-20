@@ -41,7 +41,7 @@ Partial Class frmModMan
         Me.lblVer.Name = "lblVer"
         Me.lblVer.Size = New System.Drawing.Size(76, 13)
         Me.lblVer.TabIndex = 12
-        Me.lblVer.Text = "2017.01.14.02"
+        Me.lblVer.Text = "2017.01.20.12"
         '
         'btnBrowse
         '
