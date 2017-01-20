@@ -1,6 +1,4 @@
 ﻿Imports System.IO
-Imports System.IO.Compression
-Imports System.Reflection
 Imports System.Threading
 
 
@@ -180,7 +178,7 @@ Public Class frmModMan
                 lblEXEtype.text = "Debug EXE selected (Unsupported)"
                 exelocs = dbglocs
             Case &HFC293654
-                lblEXEtype.text = "NA Release EXE selected"
+                lblEXEtype.Text = "Release EXE selected"
                 exelocs = nalocs
             Case Else
                 lblEXEtype.text = "Unknown EXE selected"
@@ -188,7 +186,7 @@ Public Class frmModMan
 
         fs.Close()
 
-        If lblEXEtype.text = "NA Release EXE selected" Then
+        If lblEXEtype.Text = "Release EXE selected" Then
             'TODO: Switch this to instrrev
             dataPath = Strings.Left(txtEXEfile.Text, txtEXEfile.Text.Length - 14)
 
@@ -196,7 +194,7 @@ Public Class frmModMan
             If Not File.Exists(dataPath & "\steam_appid.txt") Then
                 fs = New IO.FileStream(dataPath & "\steam_appid.txt", IO.FileMode.Create)
                 fs.Write(System.Text.Encoding.ASCII.GetBytes("211420"), 0, 6)
-                fs.Close
+                fs.Close()
             End If
             LoadMods()
         End If
@@ -210,11 +208,11 @@ Public Class frmModMan
         End If
 
         lbModList.Items.Clear
-        
-        For each d In Directory.GetDirectories(dataPath & "\mods")
-            Dim str() as String
+
+        For Each d In Directory.GetDirectories(dataPath & "\mods")
+            Dim str() As String
             str = d.Split("\")
-            
+
             lbModList.items.add(str(str.Count - 1))
         Next
         If lbModList.Items.Count > 0 Then
@@ -222,6 +220,7 @@ Public Class frmModMan
         End If
 
     End Sub
+
     Function RInt32(ByVal loc As Integer) As int32
         Dim tmpInt32 As Int32 = 0
         Dim byt = New Byte() {0, 0, 0, 0}
@@ -230,22 +229,15 @@ Public Class frmModMan
 
         fs.Read(byt, 0, 4)
 
-        If bigEndian Then byt.Reverse
+        If bigEndian Then
+            Array.Reverse(byt)
+        End If
 
         tmpInt32 = BitConverter.ToInt32(byt, 0)
 
         Return tmpInt32
     End Function
-    Sub WInt32(byval loc As Integer, byval val As Int32)
-        fs.Position = loc
-        
-        Dim byt() as Byte
-        byt = BitConverter.GetBytes(val)
 
-        If bigEndian Then byt = byt.Reverse
-
-        fs.Write(byt, 0, 4)
-    End Sub
     Sub WUniStrN(byval loc As Integer, byval str As String)
         Dim byt() as byte
         byt = System.Text.Encoding.Unicode.GetBytes(str)
